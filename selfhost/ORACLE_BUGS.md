@@ -432,3 +432,43 @@ Quy tắc:
 - [selfhost/app/H81_NOTES.md](app/H81_NOTES.md) §6 — `.ivm` escape
 - [selfhost/app/H82_NOTES.md](app/H82_NOTES.md) §2 — 6 nhóm mismatch stage 2
 - [DEPRECATION_TRACKING.md](../DEPRECATION_TRACKING.md) entry 8 — compiler C++ → Ivy
+
+---
+
+## 9. Audit cuối (H10.18, 2026-11-28)
+
+Rà lại toàn bộ ID sau khi H10.0–H10.17 xong, theo **Tiêu chí thoát H10** của
+`PLAN.md`.
+
+| Loại | Số mục | Trạng thái cuối |
+|---|---|---|
+| **A** - bug-compat | 57 | **fixed** hết, trừ M2/P5 *accepted* có lý do ngay trong dòng: mỗi dòng ở §1 có `H10.x` (H29: `H9.x`) ở cột Port, kèm fixture hồi quy và record golden (`expected:H10.x` trong `manifest.txt`) |
+| **B** - không tái hiện | 5 | **accepted**: R2 (A→B ở H10.8), C19, B-C3 (H10.1 có fixture), B-C19 (không giữ state qua call), B-R2 (H10.17) |
+| **C** - input cấm | 1 | H27: oracle crash `--hir`/`--mir`; port xử lý, golden đóng băng ở H10.9, `exceptions.txt` chỉ còn header (H10.17) |
+| **D** - gap | 15 + M3 | G1–G15 vẫn ngoài scope 0.6.0; **M3** đã sửa ở H9.4 bằng `--self-link`, không phải bug-compat |
+| ghi chú | 1 | R3 (không phải bug) |
+
+Kiểm chứng tự động của đợt audit:
+
+- 73 dòng ID trong tài liệu; **57/57 mục loại A** có `H10.x`/`H9.x`; 8 dòng
+  không có tham chiếu đúng là B-C19 + G1–G15 (loại B/D, không cần fix).
+- **62/62** fixture thêm trong H10 (từ commit `56677e4`) có
+  `provenance=<fixture>|expected:H10.x` trong `golden/manifest.txt`; lý do
+  `H10.1`–`H10.16`, không có mốc lạ. (Provenance ghi mốc **cuối** đã ghi
+  record, nên H10.2/H10.8 bị H10.9 re-baseline phủ, còn H10.17 không đổi
+  golden.)
+- Mọi `H10.x` được tài liệu này nhắc tới đều có mục trong `H10_NOTES.md`
+  (H10.0–H10.18); mọi fixture `.ivy` được `H10_NOTES.md` nhắc đều tồn tại
+  (hai ngoại lệ cố ý: `243_import_cpp.ivy`/`244_import_c.ivy` không vào
+  `corpus.txt` - H10.7; `zz_h10_tool_test.ivy` là fixture tạm của H10.0).
+- Workaround H29: `__ivy_memcpy` không còn ở `add_module_object`, `add_extra`,
+  `add_cpp_header`, `add_c_header`, `hobj` của `codegen.ivy` và trong
+  `pipeline.ivy`.
+- **M3**: mỗi gate `build.ps1 -SelfLink` chạy `[4/4] stage 1 links stage 2 by
+  itself` và báo `EXE self-link identical` - xác nhận `--self-link` (H9.4) vẫn
+  hoạt động, M3 không phải bug-compat.
+- `check_repro.ps1`: **REPRO PASS** - 83 artifact (42 object, 38 `.ivm`, 3
+  executable) byte-identical giữa hai cây ở độ sâu khác nhau.
+
+Kết luận: **không còn mục loại A nào mở**; H10 đủ điều kiện đóng. Tag `0.6.0`
+và bump version là bước riêng, chỉ làm khi user yêu cầu.

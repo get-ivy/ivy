@@ -1,5 +1,11 @@
 # selfhost/dogfood.ps1 - H8.2: CI dogfood gate.
 #
+# H9.9: this harness is historical.  The C++ oracle left the tree, so it runs
+# only against a `0.5-baseline` build (set IVY_ORACLE), and the differential
+# helpers it shells out to (`difftest.ps1`, `interpdiff.ps1`) live in that tag
+# as well.  CI no longer calls it: `.github/workflows/selfhost-dogfood.yml`
+# runs `build.ps1 -SelfLink -Golden` instead (noted by the H10.18 audit).
+#
 # The compiler that Ivy built itself (`ivy_selfhost.exe`, stage 1) must behave
 # exactly like the C++-built oracle on every corpus fixture.  The gate runs two
 # harnesses:
@@ -8,7 +14,7 @@
 #      oracle (stage 0) into stage 1 and proves F2 (stage 1 and stage 2 produce
 #      byte-identical objects, `.ivm` files and executable);
 #   2. `selfhost/app/driver_smoke.ps1` drives that stage 1 binary over the whole
-#      corpus: `--llvm` and `-c` on every fixture (1052 today) and link+run on
+#      corpus: `--llvm` and `-c` on every fixture (1114 today) and link+run on
 #      the codegen corpus.
 #
 # Only the modes the selfhost driver has ported are compared; `-Dumps` adds the

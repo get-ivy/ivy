@@ -5,7 +5,7 @@ name: selfhost dogfood
 # Stage 0 is the checked-in seed (`selfhost/bootstrap/ivy-stage0.exe`), so the
 # job needs no C++ compiler and no CMake: it bootstraps seed -> stage1 ->
 # stage2 (F2), has stage 1 link stage 2 by itself (`--self-link`, H9.4), and
-# runs the frozen golden gate (H9.3) — 1052 fixtures over all ten modes.
+# runs the frozen golden gate (H9.3) — 1114 fixtures over all ten modes.
 #
 # H9.9 removed the C++ tree (`src/**`, `CMakeLists.txt`).  The parity harnesses
 # that compared against it (`dogfood.ps1`, `difftest.ps1`, `interpdiff.ps1`,

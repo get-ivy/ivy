@@ -99,10 +99,14 @@ history at tag `0.5-baseline` together with its parity harnesses.
 - **Bootstrap chain:** checked-in seed (`selfhost/bootstrap/ivy-stage0.exe`) →
   stage 1 → stage 2, with byte-identical objects, module interfaces and
   executables (`selfhost/build.ps1`).
-- **Gates:** `selfhost/build.ps1 -SelfLink -Golden` (F2 + self-link + 1052-fixture
+- **Gates:** `selfhost/build.ps1 -SelfLink -Golden` (F2 + self-link + 1114-fixture
   golden parity) and `selfhost/check_repro.ps1` (reproducible build).
 - **CI:** `.github/workflows/selfhost-dogfood.yml` runs the whole chain with no
   C++ compiler and no CMake.
+- **Bug-compat (H10):** every oracle bug listed in `selfhost/ORACLE_BUGS.md` is
+  either reproduced on purpose (class A, with a regression fixture and a frozen
+  golden record) or accepted with a documented reason; §9 there is the closing
+  audit.
 
 Requirements: Windows x64, PowerShell, and LLVM 21.1.6 (`clang++` on `PATH`, or
 `LLVM_ROOT` pointing at the toolchain). The runtime object is built from

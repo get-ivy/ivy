@@ -908,8 +908,8 @@
   - **B-P5**: tuyên bố cũ "port parse đúng" là **sai** - `parser.ivy` nhánh
     `lifetime<...> template` gọi `expect("<")` rồi `parse_template_params()`
     đòi `<` lần nữa (`parser.ivy:5377-5384`), tức **cố ý** tái hiện
-double-`<`. Snippet
-    `lifetime<$a> template<typename T> fn` in đúng ba chẩn đoán `2:10`, `2:20`,
+    double-`<`. Snippet `lifetime<$a> template<typename T> fn` in đúng ba
+    chẩn đoán `2:10`, `2:20`,
     `5:1` như `LIFETIME_NOTES.md` §8.4 → B-P5 là loại **A**, chuyển sang bảng
     §1.1 của `ORACLE_BUGS.md`; corpus vẫn **cấm** dạng này.
   - **B-R2**: xác nhận là loại **B** có chủ ý - `std/rt.ivy`
@@ -924,11 +924,53 @@ double-`<`. Snippet
 - **Gate**: `build.ps1 -SelfLink -Golden` trên cây của commit → bootstrap +
   self-link identical SHA
   `C5EBF6E3DBB57F272469C3AA5DEC05343796AF023C0C96AB3CF922094162E91E`
-  (27 220 992 B), golden **13155 checks / 0 failures** (1114 fixture); golden
-  không đổi byte nào (`fixtures=1114`, `interp_fixtures=24`).
+  (27 220 992 B), golden **13155 checks / 0 failures** (1114 fixture).
 - **Ghi chú**: phạm vi audit đúng ba mục của PLAN - **B-C3**/**B-C19** không
   rà lại (B-C3 đã có fixture `h10_B-C3_addr_of_struct` chạy trong gate).
   `exceptions.txt` giữ header để mô tả format cho record crash tương lai.
+
+### H10.18 - Audit cuối
+
+- **Bug**: không có triệu chứng mới - mục chốt: rà toàn bộ ID trong
+  `ORACLE_BUGS.md` theo **Tiêu chí thoát H10** của `PLAN.md`, chạy
+  `check_repro.ps1`, cập nhật README/PLAN/notes.
+- **Sửa** (chỉ tài liệu + gate, không đổi code):
+  - **ID**: 73 dòng ID, **57 mục loại A** đều có `H10.x` (H29: `H9.x`) ở cột
+    Port; M2/P5 là *accepted* có lý do ngay trong dòng, còn lại có fixture hồi
+    quy + record golden (`expected:H10.x`); 8 dòng không tham chiếu
+    đúng là B-C19 và G1–G15 (loại B/D). 5 mục loại B `accepted` có lý do
+    (R2 ở H10.8, B-C3 ở H10.1, B-R2 ở H10.17, C19/B-C19 không tái hiện); H27
+    (C) đóng ở H10.9; **M3** xác nhận đã sửa ở H9.4 bằng `--self-link` - mỗi
+    gate chạy `[4/4] stage 1 links stage 2 by itself` + `EXE self-link
+    identical`; G1–G15 vẫn ngoài scope 0.6.0.
+  - **Fixture/golden**: 62 fixture thêm trong H10 (từ `56677e4`) → **62/62**
+    có `provenance=...|expected:H10.x`, lý do `H10.1`–`H10.16` (H10.2/H10.8 bị
+    H10.9 re-baseline phủ; H10.17 không đổi golden); mọi `H10.x` được
+    `ORACLE_BUGS.md` nhắc đều có mục ở file này.
+  - **Workaround**: `__ivy_memcpy` không còn ở 5 chỗ codegen
+    (`add_module_object`, `add_extra`, `add_cpp_header`, `add_c_header`,
+    `hobj`) và `pipeline.ivy` (H29/H10.4), tức không còn workaround bug-compat
+    trong mã self-host.
+  - **Repro**: `check_repro.ps1` → **REPRO PASS**, 83 artifact (42 object,
+    38 `.ivm`, 3 executable) byte-identical; SHA
+    `4F33E5C200E9A72B00E1355FEC3DC1FC72A99A32447668A6EAABBF6EFF938DDA`
+    (stamp `7512a5fa1dd3`; trùng SHA gate dưới đây vì cả hai build ở cùng HEAD).
+  - **CI**: dogfood `main` xanh (H10.16 run `46146113178` success; H10.17
+    đang chạy khi audit).
+  - **Docs**: README cập nhật 1052 → 1114 fixture + bullet bug-compat; PLAN
+    thêm dòng **Chốt H10**; `ORACLE_BUGS.md` thêm §9 (bảng audit + kiểm chứng
+    tự động); `.github/workflows/selfhost-dogfood.yml` sửa 1052 → 1114;
+    `selfhost/dogfood.ps1` thêm banner H9.9 (harness lịch sử, CI không còn gọi).
+- **Fixture**: không thêm (audit).
+- **Golden**: không đổi byte nào (`fixtures=1114`, `interp_fixtures=24`).
+- **Gate**: `build.ps1 -SelfLink -Golden` trên cây của commit → bootstrap +
+  self-link SHA
+  `4F33E5C200E9A72B00E1355FEC3DC1FC72A99A32447668A6EAABBF6EFF938DDA`
+  (27 220 992 B), golden **13155 checks / 0
+  failures** (1114 fixture).
+- **Ghi chú**: H10 đóng - **0 mục loại A còn mở**. `0.6.0` **chưa** tag:
+  `-Version` và `buildinfo.ivy` vẫn `0.5.0`, và bump version là thay đổi
+  binary (seed + gate lại) nên để bước riêng khi user yêu cầu.
 
 ## 2. Trạng thái
 | Mục | ID | Nội dung | Trạng thái |
@@ -951,4 +993,4 @@ double-`<`. Snippet
 | H10.15 | M1, M2 | `.ivm` escape | ✅ |
 | H10.16 | I1 | Interpreter CFG self-edge | ✅ |
 | H10.17 | H27, B-P5, B-R2 | Audit bug không tái hiện / ngoại lệ | ✅ |
-| H10.18 | - | Audit cuối + `check_repro.ps1` + tag `0.6.0` (khi user yêu cầu) | ☐ |
+| H10.18 | - | Audit cuối + `check_repro.ps1` + tag `0.6.0` (khi user yêu cầu) | ✅ |

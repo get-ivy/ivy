@@ -1068,6 +1068,14 @@ Ivy-only), H9.9 (`src/**` đã xoá) xong; không còn gate nào so với oracle
 - `check_repro.ps1` xanh; CI dogfood xanh trên `main`.
 - `H10_NOTES.md` đầy đủ; README chỉ sửa khi hành vi người dùng thay đổi.
 
+> **Chốt H10 (H10.18, 2026-11-28).** Cả năm tiêu chí đạt: cả 57 mục loại
+> **A** đều `fixed` hoặc `accepted` có lý do (M2, P5); loại B/C/D rà lại
+> đúng phân loại (M3 xác nhận `--self-link` ở H9.4, không phải bug-compat),
+> workaround H29 đã xoá, `build.ps1 -SelfLink -Golden` + `check_repro.ps1`
+> xanh, CI dogfood xanh trên `main`. Chi tiết: `selfhost/ORACLE_BUGS.md` §9,
+> `selfhost/app/H10_NOTES.md` H10.18. `-Version` vẫn `0.5.0`; tag `0.6.0` chờ
+> user yêu cầu.
+
 ---
 
 ## 6. Cổng kiểm chứng (gates)
